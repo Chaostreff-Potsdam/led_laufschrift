@@ -73,7 +73,7 @@ int current_loop = 0;
 
 void doingSomething1()
 {
-  digitalWrite(current_row+2, HIGH);
+  //digitalWrite(current_row+2, HIGH);
   // fill the shift registers of the current line
   current_row++;
   
@@ -91,8 +91,8 @@ void doingSomething1()
 
   // show line
   digitalWrite(current_row+2, LOW);
-  //delay(1);
-  //digitalWrite(current_row+2, HIGH);
+  delay(1);
+  digitalWrite(current_row+2, HIGH);
 }
 
 void setup() {
@@ -129,7 +129,7 @@ void loop() {
     ArduinoCloud.update();
     long post = millis();
     
-    Serial.println(post - pre);  
+    //Serial.println(post - pre);  
     //uptime = millis() / 1000;
     uptime = post - pre;
     
@@ -148,8 +148,22 @@ void loop() {
   //loop_pins();
   
   uint8_t newVal = random(0, 255);
-  values[mycol] = newVal;
+  //values[mycol] = newVal;
   delay(500);
+  
+  // TEST
+  char falsch[] = "FALSCH";
+  
+  for (uint8_t letter=0; letter<(sizeof(falsch)-1); letter++) {
+  //uint8_t letter = 0;  
+    Serial.println(falsch[letter]);
+    Serial.println(falsch[letter] - 65);
+    for (uint8_t i=0; i<7; i++) {
+
+      //values[letter*8+i] = Alphabet[int(falsch[letter])-65][i];
+    }
+  }
+  
 }
 
 
@@ -169,7 +183,7 @@ void setup_timer() {
   Serial.print(F("CPU Frequency = ")); Serial.print(F_CPU / 1000000); Serial.println(F(" MHz"));
   
   // Interval in microseconds
-  if (ITimer.attachInterruptInterval(1000, TimerHandler))
+  if (ITimer.attachInterruptInterval(1500, TimerHandler))
   {
     Serial.print(F("Starting ITimer OK, millis() = ")); Serial.println(millis());
   }
@@ -196,7 +210,7 @@ void setup_pins() {
   //values[59] = 0xff;
 
   // zero all bits in the shift register
-  for (int i=0; i<COLS; i++) {
+  for (uint8_t i=0; i<COLS; i++) {
       digitalWrite(OUT, 0);    
       digitalWrite(CLK, HIGH);
       delay(1);
@@ -205,16 +219,6 @@ void setup_pins() {
     }
   
   
-  // TEST
- /* int falsch[] = {6, 1, 12, 19, 3, 8};
-  
-  for (int letter=0; letter<sizeof(falsch); letter++) {
-    DisplayBuffer = Alphabet[letter];
-    
-    for (uint8_t i=0; i<8; i++) {
-      values[(8+1)*letter + i] = DisplayBuffer[i];
-    }
-  }*/
   
   //highlightColumn = 13;
 }
