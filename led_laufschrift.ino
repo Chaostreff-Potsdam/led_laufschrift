@@ -7,6 +7,7 @@
 #include <WiFiNINA.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
+
 #include "arduino_secrets.h"
 
 #define START 2 // start pin (D2)
@@ -15,7 +16,6 @@
 
 #define COLS 60
 #define ROWS 7
-
 
 unsigned int localPort = 2390; 
 WiFiUDP Udp;
@@ -37,6 +37,7 @@ uint8_t values[COLS];
 void setup_wifi() {
   //Initialize serial and wait for port to open:
   Serial.begin(9600);
+
   while (!Serial);
 
   // set the LED as output
@@ -69,23 +70,23 @@ void setup_pins() {
   pinMode(OUT, OUTPUT);
   pinMode(CLK, OUTPUT);
 
-  // setup the 
-  for (int i=0; i<ROWS; i++) {
-     pinMode(START + i, OUTPUT);
-     digitalWrite(START + i, HIGH);
+  // setup the
+  for (int i = 0; i < ROWS; i++) {
+    pinMode(START + i, OUTPUT);
+    digitalWrite(START + i, HIGH);
   }
 
   //values[58] = 0x01;
   //values[59] = 0xff;
 
   // zero all bits in the shift register
-  for (int i=0; i<COLS; i++) {
-      digitalWrite(OUT, 0);    
-      digitalWrite(CLK, HIGH);
-      delay(1);
-      //delayMicroseconds(1);
-      digitalWrite(CLK, LOW);      
-    }
+  for (int i = 0; i < COLS; i++) {
+    digitalWrite(OUT, 0);
+    digitalWrite(CLK, HIGH);
+    delay(1);
+    //delayMicroseconds(1);
+    digitalWrite(CLK, LOW);
+  }
 }
 
 void setup() {
@@ -99,36 +100,36 @@ long newVal = 0;
 
 
 void loop_pins() {
-  
+
   //newVal = newVal + random(0, 32);
   newVal = 255;
 
   if (newVal > 255) newVal = 0;
 
-  long mycol = 13; //random(0, COLS);
+  long mycol = 13;  //random(0, COLS);
+
   //long newVal = random(0, 255);
   //long newVal = COLS;
 
   values[mycol] = newVal;
-  
-  for (uint8_t line=0; line<ROWS; line++) {
+
+  for (uint8_t line = 0; line < ROWS; line++) {
 
     // fill the shift registers of the current line
-    for (uint8_t i=0; i<COLS; i++) {
+    for (uint8_t i = 0; i < COLS; i++) {
       uint8_t b = values[COLS - i];  // inverted index logic b/c of the shift registers
 
       digitalWrite(OUT, bitRead(b, line));
-          
+
       digitalWrite(CLK, HIGH);
       digitalWrite(CLK, LOW);
       //delay(10);
-      
     }
 
     // show line
-    digitalWrite(line+2, LOW);
+    digitalWrite(line + 2, LOW);
     delay(1);
-    digitalWrite(line+2, HIGH);
+    digitalWrite(line + 2, HIGH);
   }
 }
 
@@ -157,13 +158,13 @@ void check_wifi() {
     Serial.println(rssi);
     Serial.println("---------------------------------------");
   }
-  
+
   unsigned long currentMillisLED = millis();
-  
+
   // measure the signal strength and convert it into a time interval
   int intervalLED = WiFi.RSSI() * -10;
- 
-  // check if the time after the last blink is bigger the interval 
+
+  // check if the time after the last blink is bigger the interval
   if (currentMillisLED - previousMillisLED >= intervalLED) {
     previousMillisLED = currentMillisLED;
 
@@ -196,17 +197,17 @@ void set_led(int row, int col, int new_state) {
 void processUDP() {
   // if there's data available, read a packet
   int packetSize = Udp.parsePacket();
-  
+
   if (packetSize) {
     Serial.print("Received packet of size ");
     Serial.println(packetSize);
-    
+
     Serial.print("From ");
     IPAddress remoteIp = Udp.remoteIP();
     Serial.print(remoteIp);
     Serial.print(", port ");
     Serial.println(Udp.remotePort());
-    
+
     // read the packet into packetBufffer
     int len = Udp.read(packetBuffer, 255);
     if (len > 0) {
@@ -225,10 +226,10 @@ void processUDP() {
 
     int firstDelim = message.indexOf(",");
     int lastDelim = message.lastIndexOf(",");
-    
+
     int row = message.substring(0, firstDelim).toInt();
-    int col = message.substring(firstDelim+1, lastDelim).toInt();
-    int new_state = message.substring(lastDelim+1).toInt();
+    int col = message.substring(firstDelim + 1, lastDelim).toInt();
+    int new_state = message.substring(lastDelim + 1).toInt();
     Serial.println(row);
     Serial.println(col);
     Serial.println(new_state);
