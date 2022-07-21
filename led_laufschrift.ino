@@ -6,6 +6,7 @@
 
   The following variables are automatically generated and updated when changes are made to the Thing
 
+  String message;
   int highlightColumn;
   int uptime;
 
@@ -16,7 +17,6 @@
 
 #include "thingProperties.h"
 #include "alphabet.h"
-
 #define START 2 // start pin (D2)
 #define OUT 11  // output signal pin
 #define CLK 12
@@ -25,6 +25,9 @@
 #define ROWS 7
 
 uint8_t values[COLS];
+
+char myMessage[8]; //= ['K', 'R', ];
+
 
 
 #if !( defined(ARDUINO_SAMD_ZERO) || defined(ARDUINO_SAMD_MKR1000) || defined(ARDUINO_SAMD_MKRWIFI1010) \
@@ -152,21 +155,27 @@ void loop() {
   delay(500);
   
   // TEST
-  char falsch[] = "FALSCH";
+  char falsch[8] = "FALSCH";
   
-  for (uint8_t letter=0; letter<(sizeof(falsch)-1); letter++) {
-  //uint8_t letter = 0;  
-    Serial.println(falsch[letter]);
-    Serial.println(falsch[letter] - 65);
-    for (uint8_t i=0; i<7; i++) {
-
-      //values[letter*8+i] = Alphabet[int(falsch[letter])-65][i];
-    }
-  }
+  //PrintText(falsch);
   
 }
 
 
+void PrintText(char *str)
+{
+  clearDisplay();
+  
+  for (uint8_t letter=0; letter < 7; letter++) {
+  //uint8_t letter = 0;  
+    //Serial.println(str[letter]);
+    //Serial.println(str[letter] - 65);
+    for (uint8_t i=0; i<8; i++) {
+      if (str[letter]>64) values[COLS-(letter*8+(8-i))-1] = Alphabet[int(str[letter])-65][i];
+      if (str[letter]==32) values[COLS-(letter*8+(8-i))-1] = SPACE[i];
+    }
+  }
+}
 
 /*
   Since Uptime is READ_WRITE variable, onUptimeChange() is
@@ -210,17 +219,21 @@ void setup_pins() {
   //values[59] = 0xff;
 
   // zero all bits in the shift register
-  for (uint8_t i=0; i<COLS; i++) {
+  clearDisplay();
+  
+  
+  
+  //highlightColumn = 13;
+}
+
+void clearDisplay() {
+    for (uint8_t i=0; i<COLS; i++) {
       digitalWrite(OUT, 0);    
       digitalWrite(CLK, HIGH);
       delay(1);
       //delayMicroseconds(1);
       digitalWrite(CLK, LOW);      
     }
-  
-  
-  
-  //highlightColumn = 13;
 }
 
 void loop_pins() {
@@ -290,4 +303,22 @@ void set_led(int row, int col, int new_state) {
   //uint8_t new_val =
 
   values[col] = new_val;
+}
+
+/*
+  Since Message is READ_WRITE variable, onMessageChange() is
+  executed every time a new value is received from IoT Cloud.
+*/
+void onMessageChange()  {
+  Serial.println(message);
+  
+  message.toCharArray(myMessage, 8);
+  
+  if (message.length() < 7) {
+    for (uint8_t i=message.length(); i<7; i++) {
+      myMessage[i] = ' ';
+    } 
+  }
+  
+  PrintText(myMessage);
 }
