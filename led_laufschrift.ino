@@ -169,12 +169,19 @@ void PrintText(char *str)
   clearDisplay();
   
   for (uint8_t letter=0; letter < 7; letter++) {
-  //uint8_t letter = 0;  
-    //Serial.println(str[letter]);
-    //Serial.println(str[letter] - 65);
     for (uint8_t i=0; i<8; i++) {
-      if (str[letter]>64) values[COLS-(letter*8+(8-i))-1] = Alphabet[int(str[letter])-65][i];
-      if (str[letter]==32) values[COLS-(letter*8+(8-i))-1] = SPACE[i];
+      if (str[letter]==32) {  // space
+        values[COLS-(letter*8+(8-i))-1] = SPACE[i];
+        
+      } else if (str[letter]>=65 && str[letter]<=90) {  // uppercase characters
+        values[COLS-(letter*8+(8-i))-1] = Alphabet[int(str[letter])-65][i];
+        
+      } else if (str[letter]>=97 && str[letter]<=122) {  // lowercase characters -> uppercase
+        values[COLS-(letter*8+(8-i))-1] = Alphabet[int(str[letter])-97][i];
+        
+      } else {  // all else
+        values[COLS-(letter*8+(8-i))-1] = REPLACEMENT_CHARACTER[i];
+      }
     }
   }
   
