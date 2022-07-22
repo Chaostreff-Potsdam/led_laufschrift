@@ -312,10 +312,10 @@ void set_led(int row, int col, int new_state) {
 void onMessageChange()  {
   Serial.println(message);
   
-  message.toCharArray(myMessage, 8);
-  
-  if (message.length() < 7) {
-    for (uint8_t i=message.length(); i<7; i++) {
+  for (uint8_t i=0; i < 7; i++) {
+    if (message.length() > i) {
+      myMessage[i] = message.charAt(i);  
+    } else {
       myMessage[i] = ' ';
     } 
   }
