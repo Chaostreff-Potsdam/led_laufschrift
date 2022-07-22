@@ -24,9 +24,11 @@
 #define COLS 60
 #define ROWS 7
 
+#define DEBUG 1
+
 uint8_t values[COLS];
 
-char myMessage[8]; //= ['K', 'R', ];
+char myMessage[8];
 
 
 
@@ -175,6 +177,21 @@ void PrintText(char *str)
       if (str[letter]==32) values[COLS-(letter*8+(8-i))-1] = SPACE[i];
     }
   }
+  
+#if DEBUG
+  String debugOutput = String();
+  for (uint8_t j=0;j<ROWS;j++) {
+    for (uint8_t i=0;i<COLS;i++) {
+      if (get_led(ROWS - j - 1 , COLS - i - 1)) {
+        debugOutput = debugOutput + 'x';
+      } else {
+        debugOutput = debugOutput + '.';
+      }
+    }
+    debugOutput = debugOutput + '\n';
+  }
+  Serial.println(debugOutput);
+#endif
 }
 
 /*
@@ -289,6 +306,14 @@ void updateDisplay() {
     delay(1);
     digitalWrite(line+2, LOW);*/
   }
+}
+
+uint8_t get_led(int row, int col) {
+  uint8_t column = values[col];
+  
+  uint8_t pixel_state = bitRead(column, row);
+
+  return pixel_state;
 }
 
 void set_led(int row, int col, int new_state) {
