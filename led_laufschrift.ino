@@ -65,7 +65,8 @@ SAMDTimer ITimer(TIMER_TC3);
 // Each SAMD_ISR_Timer can service 16 different ISR-based timers
 SAMD_ISR_Timer ISR_Timer;
 
-#define TIMER_INTERVAL_10MS             2L
+#define TIMER_INTERVAL_2MS               2L
+#define TIMER_INTERVAL_1S             1000L
 
 void TimerHandler(void)
 {
@@ -98,6 +99,19 @@ void doingSomething1()
   digitalWrite(current_row+2, LOW);
   delay(1);
   digitalWrite(current_row+2, HIGH);
+}
+
+void tick() {
+   // shift matrix contents by one column to get marquee effect
+   for (uint8_t i=COLS; i>0; i--) {
+    values[i] = values[i - 1];
+   }
+
+   values[0] = 0;
+
+#if DEBUG
+  debugPrintValues();
+#endif
 }
 
 void setup() {
@@ -225,7 +239,8 @@ void setup_timer() {
 
   // Just to demonstrate, don't use too many ISR Timers if not absolutely necessary
   // You can use up to 16 timer for each ISR_Timer
-  ISR_Timer.setInterval(TIMER_INTERVAL_10MS,  doingSomething1);
+  ISR_Timer.setInterval(TIMER_INTERVAL_2MS,  doingSomething1);
+  ISR_Timer.setInterval(TIMER_INTERVAL_1S,   tick);
 }
 
 void setup_pins() {
