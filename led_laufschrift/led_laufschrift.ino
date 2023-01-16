@@ -77,9 +77,18 @@ int current_row = 0;
 
 int current_loop = 0;
 
-void doingSomething1()
+/**
+ * Updates the next row,
+ * i.e. fill the shift register with the current data
+ * from the display buffer (the `values` array)
+ * and show the updated row on the physical device.
+ *
+ * If the last row was already reached, start from the top.
+ * This way, with regular calls to this method (e.g. 
+ * using timers), we update the full display step by step.
+ */
+void update_single_row()
 {
-  //digitalWrite(current_row+2, HIGH);
   // fill the shift registers of the current line
   current_row++;
   
@@ -92,7 +101,6 @@ void doingSomething1()
         
     digitalWrite(CLK, HIGH);
     digitalWrite(CLK, LOW);
-    //delay(10);
   }
 
   // show line
@@ -243,7 +251,7 @@ void setup_timer() {
 
   // Just to demonstrate, don't use too many ISR Timers if not absolutely necessary
   // You can use up to 16 timer for each ISR_Timer
-  ISR_Timer.setInterval(TIMER_INTERVAL_2MS,  doingSomething1);
+  ISR_Timer.setInterval(TIMER_INTERVAL_2MS,  update_single_row);
   ISR_Timer.setInterval(TIMER_INTERVAL_1S,   tick);
 }
 
