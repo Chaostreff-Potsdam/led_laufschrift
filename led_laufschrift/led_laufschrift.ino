@@ -227,13 +227,9 @@ void debugPrintValues() {
   Serial.println(debugOutput);
 }
 
-/*
-  Since Uptime is READ_WRITE variable, onUptimeChange() is
-  executed every time a new value is received from IoT Cloud.
-*/
-void onUptimeChange()  {
-  // Add your code here to act upon Uptime change
-}
+/**************************/
+/***** Setup routines *****/
+/**************************/
 
 void setup_timer() {
   
@@ -277,6 +273,10 @@ void setup_pins() {
   //highlightColumn = 13;
 }
 
+/****************************/
+/***** Display routines *****/
+/****************************/
+
 void clearDisplay() {
     for (uint8_t i=0; i<COLS; i++) {
       digitalWrite(OUT, 0);    
@@ -287,14 +287,7 @@ void clearDisplay() {
     }
 }
 
-/*
-  Since HighlightColumn is READ_WRITE variable, onHighlightColumnChange() is
-  executed every time a new value is received from IoT Cloud.
-*/
-void onHighlightColumnChange()  {
-  values[highlightColumn] = 255;
-  updateDisplay();
-}
+
 
 void updateDisplay() {
   for (uint8_t line=0; line<ROWS; line++) {
@@ -318,6 +311,10 @@ void updateDisplay() {
   }
 }
 
+/**********************/
+/***** Primitives *****/
+/**********************/
+
 uint8_t get_led(int row, int col) {
   uint8_t column = values[col];
   
@@ -338,6 +335,27 @@ void set_led(int row, int col, int new_state) {
   //uint8_t new_val =
 
   values[col] = new_val;
+}
+
+/**************************/
+/***** Update handlers ****/
+/**************************/
+
+/*
+  Since Uptime is READ_WRITE variable, onUptimeChange() is
+  executed every time a new value is received from IoT Cloud.
+*/
+void onUptimeChange()  {
+  // Add your code here to act upon Uptime change
+}
+
+/*
+  Since HighlightColumn is READ_WRITE variable, onHighlightColumnChange() is
+  executed every time a new value is received from IoT Cloud.
+*/
+void onHighlightColumnChange()  {
+  values[highlightColumn] = 255;
+  updateDisplay();
 }
 
 /*
