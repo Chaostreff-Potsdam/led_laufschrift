@@ -279,25 +279,6 @@ void clearDisplay() {
     }
 }
 
-void loop_pins() {
-  
-  //newVal = newVal + random(0, 32);
-  //long newVal = 255;
-
-  //if (newVal > 255) newVal = 0;
-
-  //long mycol = 13; //random(0, COLS);
-  //long newVal = random(0, 255);
-  //long newVal = COLS;
-  
-  //highlightColumn = 13;
-
-
-  //values[mycol] = newVal;
-  
-  
-}
-
 /*
   Since HighlightColumn is READ_WRITE variable, onHighlightColumnChange() is
   executed every time a new value is received from IoT Cloud.
@@ -326,11 +307,6 @@ void updateDisplay() {
     digitalWrite(line+2, LOW);
     delay(1);
     digitalWrite(line+2, HIGH);
-    
-    // wahrscheinlich falsch rum
-    /*digitalWrite(line+2, HIGH);
-    delay(1);
-    digitalWrite(line+2, LOW);*/
   }
 }
 
