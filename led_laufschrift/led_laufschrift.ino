@@ -200,6 +200,11 @@ void PrintText(char *str)
   }
   
 #if DEBUG
+  debugPrintValues();
+#endif
+}
+
+void debugPrintValues() {
   String debugOutput = String();
   for (uint8_t j=0;j<ROWS;j++) {
     for (uint8_t i=0;i<COLS;i++) {
@@ -212,7 +217,6 @@ void PrintText(char *str)
     debugOutput = debugOutput + '\n';
   }
   Serial.println(debugOutput);
-#endif
 }
 
 /*
